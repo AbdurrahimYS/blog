@@ -110,12 +110,12 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=request.form['email']).first()
+        hashed_pass = generate_password_hash(password=request.form['password'], method='pbkdf2:sha256',
+                                             salt_length=8)
         if user:
             flash("You've already signed up with that email, log in instead.")
             return redirect(url_for('login'))
         else:
-            hashed_pass = generate_password_hash(password=request.form['password'], method='pbkdf2:sha256',
-                                                 salt_length=8)
             new_user = User(name=request.form['name'],  # type: ignore
                             email=request.form['email'],  # type: ignore
                             password=hashed_pass)  # type: ignore
